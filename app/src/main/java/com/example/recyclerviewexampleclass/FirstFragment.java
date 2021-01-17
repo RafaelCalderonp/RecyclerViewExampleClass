@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,7 +18,7 @@ import com.example.recyclerviewexampleclass.databinding.WordItemListBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstFragment extends Fragment {
+public class FirstFragment extends Fragment implements WordAdapter.InterfacePasarElemento {
     private FragmentFirstBinding mBinding;
     private List<String> dataList = new ArrayList<>();
     @Override
@@ -31,7 +33,7 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Instanciamos el adapter y le pasamos el listado de datos con el metodo setData
-        WordAdapter adapter = new WordAdapter(setData());
+        WordAdapter adapter = new WordAdapter(setData(), this );
         //le pasamos el adapter al recycler View
         mBinding.recycleView.setAdapter(adapter);
         //le Indicamos a RV como mostrar los elementos, podria ser GridLayaut o StaggerredLayaut.
@@ -55,5 +57,15 @@ public class FirstFragment extends Fragment {
             dataList.add("Palabra   :" + i);
         }
         return dataList;
+    }
+
+    @Override
+    public void passElement(String item) {
+
+        //Toast.makeText(getContext(), item, Toast.LENGTH_SHORT).show();
+        Bundle mBundle = new Bundle();
+        mBundle.putString("item", item);
+        Navigation.findNavController(mBinding.getRoot())
+                .navigate(R.id.action_FirstFragment_to_SecondFragment, mBundle);
     }
 }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,9 +19,13 @@ public class WordAdapter   extends  RecyclerView.Adapter<WordAdapter.WordViewHol
 
     // 1.- Añadir una representación de los datos.
     private List<String> mWordList;
+    //referencia a la interface que pasa el objeto
+    private InterfacePasarElemento pasarElemento;
+
     // 8.- Crear contructor no vacio
-    public WordAdapter(List<String> mWordList) {
+    public WordAdapter(List<String> mWordList, InterfacePasarElemento pasarElemento) {
         this.mWordList = mWordList;
+        this.pasarElemento = pasarElemento;
     }
 
     @NonNull
@@ -47,13 +52,37 @@ public class WordAdapter   extends  RecyclerView.Adapter<WordAdapter.WordViewHol
     }
 
     // 2.- Crear clase interna ViewHolder
-    public class WordViewHolder extends RecyclerView.ViewHolder {
+    public class WordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView textView;
 
         public WordViewHolder(@NonNull WordItemListBinding mBinding) {
             super(mBinding.getRoot());
             textView = mBinding.textView;
+            //No olvidar este paso, para que funcione el click listener.
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            // Con esto obtengo la posición del elemento al cual le hago click.
+            int position = getLayoutPosition();
+            String seleccionado = mWordList.get(position);
+
+            mWordList.set(position, seleccionado +" Click");
+            notifyDataSetChanged();
+            //Toast es solo para mostrar a quien le estoy haciendo click
+            //Toast.makeText(v.getContext(), seleccionado, Toast.LENGTH_SHORT).show();
+            pasarElemento.passElement(seleccionado);
+
+        }
+
+    }
+
+    //Interface con un metodo que recibe el elemento y lo pasa a donde este implementada la interface.
+
+    public interface InterfacePasarElemento{
+        //Debemos pasar un objeti, en este caso es un String)
+        void passElement(String item);
     }
 
 }
